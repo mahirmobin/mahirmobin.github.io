@@ -43,7 +43,7 @@ header {
 #logoutBtn:hover {
     background-color: #962d22;
 }
-/* Body padding to avoid header overlap */
+/* Body padding to avoid header overlay */
 body {
     padding-top: 70px;
     max-width: 960px;
@@ -286,7 +286,6 @@ $(function(){
             return $(this).find('name').text() === currentUser.name;
         }) : $();
 
-        // Extract purchases and rated items
         const purchasedIds = $buyer.length > 0
             ? $buyer.find('purchases item').map(function() { return $(this).text(); }).get()
             : [];
@@ -374,7 +373,7 @@ $(function(){
                 html += `<button class="rateBtn" data-id="${item.id}" aria-label="Submit rating for ${escapeHtml(item.name)}">Submit Rating</button>`;
                 html += `<span class="rateMsg" id="msg_${item.id}" aria-live="polite"></span>`;
             } else {
-                // Purchased and rated -> show buy button (allowing repeat buy/rate)
+                // Purchased and rated -> show buy button again (toggle)
                 html += `<button class="buyBtn" data-id="${item.id}" aria-label="Buy item ${escapeHtml(item.name)}">Buy</button>`;
                 html += `<span class="buyMsg" id="buymsg_${item.id}" aria-live="polite"></span>`;
             }
@@ -506,7 +505,6 @@ $(function(){
             $buyer.append('<ratedItems></ratedItems>');
         }
 
-        // Avoid duplicate rating entries — but since UI prevents, just append here:
         $buyer.find('ratedItems').append(`<item>${itemId}</item>`);
 
         const updatedBuyersXml = serializer.serializeToString(buyersDoc);
@@ -530,24 +528,21 @@ $(function(){
         $msg.text('Rating submitted! Thank you.').css('color', 'green');
         $input.val('');
 
-        // Replace rating input with Buy button again (per your request)
         const $itemElem = $(`#itemsContainer [data-id="${itemId}"] .controls`);
         $itemElem.empty();
         $itemElem.append(`<button class="buyBtn" data-id="${itemId}" aria-label="Buy item ${itemId}">Buy</button>`);
         $itemElem.append(`<span class="buyMsg" id="buymsg_${itemId}" aria-live="polite"></span>`);
 
-        // Update average rating display near bottom of item
         const $avgRatingDiv = $(`#itemsContainer [data-id="${itemId}"] > div:last-child`);
         $avgRatingDiv.html(`Average Rating: <b>${item.avgRating}</b>`);
     });
 
-    // Logout button
+    // Logout
     $('#logoutBtn').click(() => {
         sessionStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     });
 
-    // Escape HTML helper
     function escapeHtml(text) {
         return text.replace(/[&<>"']/g, function(m) {
             return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
