@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MIDDLE - Buyer Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+/* Fixed header with title and logout */
+header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: white;
+    z-index: 999;
+    height: 60px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+    font-size: 2.2rem;
+    user-select: none;
+}
+
+/* Logout top-right */
+#logoutBtn {
+    position: fixed;
+    top: 12px;
+    right: 20px;
+    background-color: #c0392b;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(192,57,43,0.6);
+    transition: background-color 0.3s ease;
+    user-select: none;
+    z-index: 1100;
+}
+
+#logoutBtn:hover {
+    background-color: #962d22;
+}
+
+body {
+    padding-top: 70px;
+    max-width: 960px;
+    margin: 0 auto 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #222;
+}
+
+/* Title */
+h2 {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+/* Search input */
+#searchInput {
+    display: block;
+    width: 440px;
+    max-width: 90%;
+    margin: 0 auto 32px;
+    padding: 14px 18px;
+    font-size: 1.2rem;
+    border: 2px solid #2980b9;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #1e497a;
+    outline: none;
+    box-shadow: 0 0 12px rgba(41, 128, 185, 0.5);
+}
+
+/* Items list as line boxes */
+#itemsContainer {
+    margin: 0 20px;
+}
+
+.item-card {
+    background: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    min-height: 90px;
+}
+
+.item-info {
+    max-width: 60%;
+    user-select: text;
+}
+
+.item-info b {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    display: block;
+}
+
+.item-info i {
+    color: #34495e;
+    font-weight: 600;
+    font-style: normal;
+    display: block;
+    margin-top: 2px;
+    opacity: 0.85;
+}
+
+.item-info small {
+    color: #555;
+    font-size: 0.9rem;
+    margin-top: 8px;
+    line-height: 1.3;
+    max-height: 36px;
+    overflow: hidden;
+    user-select: text;
+}
+
+.seller-contact {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 6px;
+    font-style: normal;
+    user-select: text;
+}
+
+.seller-contact a {
+    color: #2980b9;
+    text-decoration: none;
+    display: block;
+    margin-top: 3px;
+}
+
+.seller-contact a:hover,
+.seller-contact a:focus {
+    text-decoration: underline;
+}
+
+.price {
+    color: #2980b9;
+    font-weight: 700;
+    font-size: 1.2rem;
+    user-select: text;
+    min-width: 90px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 250px;
+    flex-wrap: wrap;
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
+.controls label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.controls input[type=number] {
+    width: 70px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+    margin-right: 12px;
+    user-select: text;
+}
+
+.controls input[type=number]:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 10px rgba(41, 128, 185, 0.4);
+}
+
+.controls button {
+    background-color: #2980b9;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    padding: 10px 22px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    user-select: none;
+}
+
+.controls button:hover:not(:disabled) {
+    background-color: #1e497a;
+}
+
+.controls button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+}
+
+/* Messages */
+.rateMsg,
+.buyMsg {
+    font-size: 0.95rem;
+    color: #27ae60;
+    margin-left: 10px;
+    vertical-align: middle;
+    user-select: none;
+}
+
+@media (max-width: 700px) {
+    .item-card {
+        flex-direction: column;
+        align-items: flex-start;
+        min-height: auto;
+        padding: 16px;
+    }
+    .item-info {
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+    .price, .controls {
+        min-width: 100%;
+        margin-left: 0;
+        gap: 10px;
+    }
+    .controls label {
+        margin-right: 6px;
+    }
+    .controls button, .controls input[type=number] {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1 class="site-title">MIDDLE</h1>
+    <button id="logoutBtn" aria-label="Logout">Logout</button>
+</header>
+
+<main>
+    <h2>Buyer Dashboard</h2>
+    <input type="search" id="searchInput" placeholder="Search items by name..." aria-label="Search items by name" />
+
+    <section id="itemsContainer" aria-live="polite" aria-atomic="true"></section>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(function(){
+    // Check user session & role
+    const userRaw = sessionStorage.getItem('currentUser');
+    if(!userRaw){
+        alert('Please login as buyer first.');
+        window.location.href = 'index.html';
+        return;
+    }
+    const currentUser = JSON.parse(userRaw);
+    if(currentUser.userType !== 'buyer'){
+        alert('Only buyers allowed here.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    let allItems = [];
+
+    // Load seller items and buyer purchases
+    function loadItems() {
+        const sellersXML = localStorage.getItem('sellersXML');
+        const buyersXML = localStorage.getItem('buyersXML');
+
+        if(!sellersXML) {
+            $('#itemsContainer').html('<p>No sellers or items available.</p>');
+            return;
+        }
+
+        const sellersDoc = $.parseXML(sellersXML);
+        const buyersDoc = buyersXML ? $.parseXML(buyersXML) : null;
+
+        const $sellers = $(sellersDoc);
+        const $buyers = buyersDoc ? $(buyersDoc) : null;
+
+        const $buyer = $buyers ? $buyers.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        }) : $();
+
+        const purchasedIds = $buyer.length > 0 ? $buyer.find('purchases item').map(function(){ return $(this).text() }).get() : [];
+
+        allItems = [];
+
+        $sellers.find('user').each(function(){
+            const $seller = $(this);
+            const sellerName = $seller.find('name').text();
+            const sellerEmail = $seller.find('email').text();
+            const sellerPhone = $seller.find('phone').text();
+
+            $seller.find('items item').each(function(){
+                const $item = $(this);
+                const ratingsArr = $item.find('ratings rating').map(function(){ return parseFloat($(this).text()); }).get();
+
+                let avgNum = 0;
+                let avgRating = 'No ratings';
+                if(ratingsArr.length > 0){
+                    const sum = ratingsArr.reduce((a,b) => a+b, 0);
+                    avgNum = sum / ratingsArr.length;
+                    avgRating = avgNum.toFixed(2) + ` (${ratingsArr.length} ratings)`;
+                }
+
+                allItems.push({
+                    id: $item.find('id').text(),
+                    name: $item.find('name').text(),
+                    desc: $item.find('desc').text(),
+                    price: parseFloat($item.find('price').text()).toFixed(2),
+                    seller: sellerName,
+                    sellerEmail,
+                    sellerPhone,
+                    avgRating,
+                    avgNum,
+                    purchased: purchasedIds.includes($item.find('id').text())
+                });
+            });
+        });
+
+        if(allItems.length === 0){
+            $('#itemsContainer').html('<p>No items available.</p>');
+            return;
+        }
+
+        renderItems(allItems);
+    }
+
+    // Render items as horizontal line boxes
+    function renderItems(items) {
+        items.sort((a,b) => b.avgNum - a.avgNum);
+        let html = '';
+        items.forEach(item => {
+            html += `<article class="item-card" data-id="${item.id}" tabindex="0" aria-label="Item: ${escapeHtml(item.name)} by ${escapeHtml(item.seller)}">`;
+
+            html += `<div class="item-info">`;
+            html += `<b>${escapeHtml(item.name)}</b>`;
+            html += `<i>by ${escapeHtml(item.seller)}</i>`;
+            html += `<small>${escapeHtml(item.desc)}</small>`;
+            html += `<div class="seller-contact">`;
+            html += `Seller Email: <a href="mailto:${encodeURIComponent(item.sellerEmail)}">${escapeHtml(item.sellerEmail)}</a><br>`;
+            html += `Seller Phone: <a href="tel:${encodeURIComponent(item.sellerPhone)}">${escapeHtml(item.sellerPhone)}</a>`;
+            html += `</div>`;
+            html += `</div>`;
+
+            html += `<div class="price">₹${item.price}</div>`;
+
+            html += `<div class="controls" role="group" aria-label="Actions for item ${escapeHtml(item.name)}">`;
+            if(item.purchased){
+                html += `<label for="rate_${item.id}">Rate:</label>`;
+                html += `<input type="number" id="rate_${item.id}" min="0" max="5" step="0.1" aria-describedby="msg_${item.id}" />`;
+                html += `<button class="rateBtn" data-id="${item.id}" aria-label="Submit rating for ${escapeHtml(item.name)}">Submit Rating</button>`;
+                html += `<span class="rateMsg" id="msg_${item.id}" aria-live="polite"></span>`;
+            } else {
+                html += `<button class="buyBtn" data-id="${item.id}" aria-label="Buy item ${escapeHtml(item.name)}">Buy</button>`;
+                html += `<span class="buyMsg" id="buymsg_${item.id}" aria-live="polite"></span>`;
+            }
+            html += `</div>`;
+
+            html += `<div>Average Rating: <b>${item.avgRating}</b></div>`;
+            html += `</article>`;
+        });
+        $('#itemsContainer').html(html);
+    }
+
+    // Search filter by item name
+    $('#searchInput').on('input', function(){
+        const query = $(this).val().toLowerCase().trim();
+        const filtered = allItems.filter(item => item.name.toLowerCase().includes(query));
+        renderItems(filtered);
+    });
+
+    // Buy button click
+    $('#itemsContainer').on('click', '.buyBtn', function(){
+        const itemId = $(this).data('id');
+        const $msg = $('#buymsg_' + itemId);
+        $msg.text('');
+
+        const buyersXML = localStorage.getItem('buyersXML');
+        if(!buyersXML) {
+            $msg.text('Error: No buyers data.').css('color', 'red');
+            return;
+        }
+
+        const buyersDoc = $.parseXML(buyersXML);
+        const $buyers = $(buyersDoc);
+
+        const $buyer = $buyers.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        });
+        if($buyer.length === 0) {
+            $msg.text('Buyer data not found.').css('color', 'red');
+            return;
+        }
+
+        if($buyer.find('purchases').length === 0){
+            $buyer.append('<purchases></purchases>');
+        }
+
+        const purchasedIds = $buyer.find('purchases item').map(function(){ return $(this).text(); }).get();
+        if(purchasedIds.includes(itemId)){
+            $msg.text('You already purchased this item.').css('color', 'green');
+            return;
+        }
+
+        $buyer.find('purchases').append(`<item>${itemId}</item>`);
+
+        const updatedXML = new XMLSerializer().serializeToString(buyersDoc);
+        localStorage.setItem('buyersXML', updatedXML);
+
+        $msg.text('Purchase successful!').css('color', 'green');
+
+        // Update cache and refresh UI
+        allItems.forEach(item => {
+            if(item.id === itemId) item.purchased = true;
+        });
+
+        renderItems(allItems);
+    });
+
+    // Rate button click
+    $('#itemsContainer').on('click', '.rateBtn', function(){
+        const itemId = $(this).data('id');
+        const $input = $('#rate_' + itemId);
+        const rateVal = parseFloat($input.val());
+        const $msg = $('#msg_' + itemId);
+        $msg.text('');
+
+        if(isNaN(rateVal) || rateVal < 0 || rateVal > 5){
+            $msg.text('Enter a rating between 0 and 5.').css('color', 'red');
+            return;
+        }
+
+        const sellersXML = localStorage.getItem('sellersXML');
+        if(!sellersXML){
+            $msg.text('Error: No sellers data.').css('color', 'red');
+            return;
+        }
+
+        const sellersDoc = $.parseXML(sellersXML);
+        const $sellers = $(sellersDoc);
+
+        let $foundItem = null;
+        $sellers.find('user').each(function(){
+            const $user = $(this);
+            $user.find('items item').each(function(){
+                if($(this).find('id').text() === itemId){
+                    $foundItem = $(this);
+                    return false;
+                }
+            });
+            if($foundItem) return false;
+        });
+
+        if(!$foundItem){
+            $msg.text('Item not found.').css('color', 'red');
+            return;
+        }
+
+        if($foundItem.find('ratings').length === 0){
+            $foundItem.append('<ratings></ratings>');
+        }
+        $foundItem.find('ratings').append(`<rating>${rateVal}</rating>`);
+
+        const updatedXML = new XMLSerializer().serializeToString(sellersDoc);
+        localStorage.setItem('sellersXML', updatedXML);
+
+        $msg.text('Rating submitted!').css('color', 'green');
+        $input.val('');
+        loadItems();
+    });
+
+    // Logout
+    $('#logoutBtn').click(() => {
+        sessionStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+    });
+
+    // Escape HTML helper
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    loadItems();
+});
+</script>
+</body>
+</html>

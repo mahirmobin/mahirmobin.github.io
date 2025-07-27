@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MIDDLE - Seller Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+/* Add some modern style consistent with buyer_dashboard */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7f9;
+    max-width: 720px;
+    margin: 40px auto 60px auto;
+    padding: 0 20px;
+    color: #222;
+    line-height: 1.5;
+}
+
+header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    color: #2c3e50;
+    font-size: 2.2rem;
+}
+
+#logoutBtn {
+    position: fixed;
+    top: 12px;
+    right: 20px;
+    background-color: #c0392b;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(192,57,43,0.6);
+    transition: background-color 0.3s;
+    user-select: none;
+    z-index: 1100;
+}
+
+#logoutBtn:hover {
+    background-color: #962d22;
+}
+
+h2 {
+    margin-top: 80px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+form {
+    background: white;
+    padding: 25px 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    border-radius: 12px;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-top: 14px;
+    margin-bottom: 8px;
+    color: #34495e;
+}
+
+input[type=text],
+input[type=number],
+textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+textarea:focus {
+    border-color: #2980b9;
+    outline: none;
+    box-shadow: 0 0 10px rgba(41, 128, 185, 0.4);
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    margin-top: 20px;
+    padding: 14px 32px;
+    background-color: #2980b9;
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: block;
+    width: 100%;
+    user-select: none;
+    transition: background-color 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+    background-color: #1e497a;
+}
+
+button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+}
+
+.msg {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+#itemsList ul {
+    list-style: none;
+    padding-left: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#itemsList ul li.item {
+    padding: 16px 20px;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 14px;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+#itemsList ul li.item small {
+    display: block;
+    margin-top: 6px;
+    color: #555;
+}
+
+.price {
+    color: #2980b9;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    form {
+        padding: 20px;
+    }
+    #itemsList ul li.item {
+        font-size: 1rem;
+        padding: 14px 18px;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>MIDDLE</header>
+
+<button id="logoutBtn" aria-label="Logout">Logout</button>
+
+<h2>Seller Dashboard</h2>
+
+<form id="addItemForm" novalidate>
+    <label for="itemName">Item Name</label>
+    <input id="itemName" type="text" required />
+
+    <label for="itemDesc">Description</label>
+    <textarea id="itemDesc" rows="4" required></textarea>
+
+    <label for="itemPrice">Price (₹)</label>
+    <input id="itemPrice" type="number" min="0" step="0.01" required />
+
+    <button type="submit">Add Item</button>
+</form>
+
+<div id="itemMsg" class="msg" aria-live="polite"></div>
+
+<section>
+    <h3 style="text-align:center; margin-bottom:20px;">Your Items</h3>
+    <div id="itemsList"></div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function() {
+    let currentUserRaw = sessionStorage.getItem('currentUser');
+    if(!currentUserRaw) {
+        alert('Please login as seller first.');
+        window.location.href = 'index.html';
+        return;
+    }
+    let currentUser = JSON.parse(currentUserRaw);
+    if(currentUser.userType !== 'seller'){
+        alert('Access denied: Seller only.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/[&<>"']/g, function(m) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[m];
+        });
+    }
+
+    function loadItems() {
+        $('#itemsList').empty();
+        let sellersXML = localStorage.getItem('sellersXML');
+        if(!sellersXML){
+            $('#itemsList').html('<p style="text-align:center;">No items found.</p>');
+            return;
+        }
+        let xmlDoc = $.parseXML(sellersXML);
+        let $xml = $(xmlDoc);
+
+        let $seller = $xml.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        });
+
+        if($seller.length === 0 || $seller.find('items item').length === 0){
+            $('#itemsList').html('<p style="text-align:center;">You have no items listed yet.</p>');
+            return;
+        }
+
+        let html = '<ul>';
+        $seller.find('items item').each(function(){
+            let $item = $(this);
+            let name = $item.find('name').text();
+            let desc = $item.find('desc').text();
+            let price = $item.find('price').text();
+
+            let ratings = $item.find('ratings rating').map(function(){
+                return parseFloat($(this).text());
+            }).get();
+
+            let avgRating = 'No ratings';
+            if(ratings.length > 0){
+                let sum = ratings.reduce((a,b) => a+b, 0);
+                avgRating = (sum / ratings.length).toFixed(2) + ` (${ratings.length} ratings)`;
+            }
+
+            html += `<li class="item">
+                <b>${escapeHtml(name)}</b> - <span class="price">₹${parseFloat(price).toFixed(2)}</span><br />
+                <small>${escapeHtml(desc)}</small><br />
+                Average rating: <strong>${avgRating}</strong>
+            </li>`;
+        });
+        html += '</ul>';
+        $('#itemsList').html(html);
+    }
+
+    $('#addItemForm').on('submit', function(e) {
+        e.preventDefault();
+        $('#itemMsg').empty();
+
+        let name = $('#itemName').val().trim();
+        let desc = $('#itemDesc').val().trim();
+        let price = parseFloat($('#itemPrice').val());
+
+        if(!name || !desc || isNaN(price) || price < 0) {
+            $('#itemMsg').html('<span class="error">Please fill all fields correctly.</span>');
+            return;
+        }
+
+        let sellersXML = localStorage.getItem('sellersXML');
+        let doc, $xml;
+
+        if(sellersXML){
+            doc = $.parseXML(sellersXML);
+            $xml = $(doc);
+        } else {
+            doc = new DOMParser().parseFromString('<sellers></sellers>', 'text/xml');
+            $xml = $(doc);
+        }
+
+        let $seller = $xml.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        });
+
+        if($seller.length === 0){
+            $xml.find('sellers').append(
+                `<user>
+                    <name>${escapeHtml(currentUser.name)}</name>
+                    <password></password>
+                    <phone></phone>
+                    <email></email>
+                    <rating>0</rating>
+                    <items></items>
+                </user>`
+            );
+            $seller = $xml.find('user').filter(function(){
+                return $(this).find('name').text() === currentUser.name;
+            });
+        }
+
+        if($seller.find('items').length === 0){
+            $seller.append('<items></items>');
+        }
+
+        let itemId = 'item_' + Date.now();
+
+        let itemXML = `<item>
+            <id>${itemId}</id>
+            <name>${escapeHtml(name)}</name>
+            <desc>${escapeHtml(desc)}</desc>
+            <price>${price.toFixed(2)}</price>
+            <ratings></ratings>
+        </item>`;
+
+        $seller.find('items').append($(itemXML));
+
+        let serializer = new XMLSerializer();
+        let updatedXML = serializer.serializeToString(doc);
+        localStorage.setItem('sellersXML', updatedXML);
+
+        $('#itemMsg').html('<span class="success">Item added successfully!</span>');
+        this.reset();
+        loadItems();
+    });
+
+    $('#logoutBtn').click(()=>{
+        sessionStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+    });
+
+    loadItems();
+});
+</script>
+</body>
+</html>
