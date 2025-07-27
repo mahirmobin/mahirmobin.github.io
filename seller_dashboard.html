@@ -6,18 +6,7 @@
 <title>VendorLine - Seller Dashboard</title>
 <link rel="stylesheet" href="style.css" />
 <style>
-/* Add some modern style consistent with buyer_dashboard */
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f4f7f9;
-    max-width: 720px;
-    margin: 40px auto 60px auto;
-    padding: 0 20px;
-    color: #222;
-    line-height: 1.5;
-}
-
+/* Fixed header with site name */
 header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -27,13 +16,15 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
     font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
     color: #2c3e50;
     font-size: 2.2rem;
+    user-select: none;
+    z-index: 1000;
+    margin-bottom: 0;
 }
 
+/* Logout button top-right */
 #logoutBtn {
     position: fixed;
     top: 12px;
@@ -47,7 +38,7 @@ header {
     font-size: 1rem;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(192,57,43,0.6);
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
     user-select: none;
     z-index: 1100;
 }
@@ -56,23 +47,33 @@ header {
     background-color: #962d22;
 }
 
+/* Body padding for fixed header */
+body {
+    padding-top: 70px;
+    background: #f4f7f9;
+    max-width: 720px;
+    margin: 40px auto 60px auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: #222;
+    line-height: 1.5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 h2 {
-    margin-top: 80px;
+    text-align: center;
     font-weight: 700;
     color: #333;
-    text-align: center;
     margin-bottom: 25px;
 }
 
+/* Form styling */
 form {
     background: white;
     padding: 25px 30px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.07);
     border-radius: 12px;
     margin-bottom: 40px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 label {
@@ -109,6 +110,7 @@ textarea {
 
 button {
     margin-top: 20px;
+    width: 100%;
     padding: 14px 32px;
     background-color: #2980b9;
     color: white;
@@ -117,8 +119,6 @@ button {
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.1rem;
-    display: block;
-    width: 100%;
     user-select: none;
     transition: background-color 0.3s ease;
 }
@@ -132,6 +132,7 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Message section */
 .msg {
     text-align: center;
     margin-top: 15px;
@@ -139,6 +140,7 @@ button:disabled {
     font-size: 1rem;
 }
 
+/* Item list */
 #itemsList ul {
     list-style: none;
     padding-left: 0;
@@ -168,10 +170,17 @@ button:disabled {
     font-weight: 700;
 }
 
+/* Responsive adjustments */
 @media (max-width: 600px) {
+    body {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
     form {
         padding: 20px;
     }
+
     #itemsList ul li.item {
         font-size: 1rem;
         padding: 14px 18px;
@@ -182,7 +191,6 @@ button:disabled {
 <body>
 
 <header>VendorLine</header>
-
 <button id="logoutBtn" aria-label="Logout">Logout</button>
 
 <h2>Seller Dashboard</h2>
@@ -210,13 +218,13 @@ button:disabled {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(function() {
-    let currentUserRaw = sessionStorage.getItem('currentUser');
+    const currentUserRaw = sessionStorage.getItem('currentUser');
     if(!currentUserRaw) {
         alert('Please login as seller first.');
         window.location.href = 'index.html';
         return;
     }
-    let currentUser = JSON.parse(currentUserRaw);
+    const currentUser = JSON.parse(currentUserRaw);
     if(currentUser.userType !== 'seller'){
         alert('Access denied: Seller only.');
         window.location.href = 'index.html';
@@ -237,15 +245,15 @@ $(function() {
 
     function loadItems() {
         $('#itemsList').empty();
-        let sellersXML = localStorage.getItem('sellersXML');
+        const sellersXML = localStorage.getItem('sellersXML');
         if(!sellersXML){
             $('#itemsList').html('<p style="text-align:center;">No items found.</p>');
             return;
         }
-        let xmlDoc = $.parseXML(sellersXML);
-        let $xml = $(xmlDoc);
+        const xmlDoc = $.parseXML(sellersXML);
+        const $xml = $(xmlDoc);
 
-        let $seller = $xml.find('user').filter(function(){
+        const $seller = $xml.find('user').filter(function(){
             return $(this).find('name').text() === currentUser.name;
         });
 
@@ -256,18 +264,18 @@ $(function() {
 
         let html = '<ul>';
         $seller.find('items item').each(function(){
-            let $item = $(this);
-            let name = $item.find('name').text();
-            let desc = $item.find('desc').text();
-            let price = $item.find('price').text();
+            const $item = $(this);
+            const name = $item.find('name').text();
+            const desc = $item.find('desc').text();
+            const price = $item.find('price').text();
 
-            let ratings = $item.find('ratings rating').map(function(){
+            const ratings = $item.find('ratings rating').map(function(){
                 return parseFloat($(this).text());
             }).get();
 
             let avgRating = 'No ratings';
             if(ratings.length > 0){
-                let sum = ratings.reduce((a,b) => a+b, 0);
+                const sum = ratings.reduce((a,b) => a+b, 0);
                 avgRating = (sum / ratings.length).toFixed(2) + ` (${ratings.length} ratings)`;
             }
 
@@ -285,9 +293,9 @@ $(function() {
         e.preventDefault();
         $('#itemMsg').empty();
 
-        let name = $('#itemName').val().trim();
-        let desc = $('#itemDesc').val().trim();
-        let price = parseFloat($('#itemPrice').val());
+        const name = $('#itemName').val().trim();
+        const desc = $('#itemDesc').val().trim();
+        const price = parseFloat($('#itemPrice').val());
 
         if(!name || !desc || isNaN(price) || price < 0) {
             $('#itemMsg').html('<span class="error">Please fill all fields correctly.</span>');
@@ -295,14 +303,14 @@ $(function() {
         }
 
         let sellersXML = localStorage.getItem('sellersXML');
-        let doc, $xml;
+        let xmlDoc, $xml;
 
         if(sellersXML){
-            doc = $.parseXML(sellersXML);
-            $xml = $(doc);
+            xmlDoc = $.parseXML(sellersXML);
+            $xml = $(xmlDoc);
         } else {
-            doc = new DOMParser().parseFromString('<sellers></sellers>', 'text/xml');
-            $xml = $(doc);
+            xmlDoc = new DOMParser().parseFromString('<sellers></sellers>', 'text/xml');
+            $xml = $(xmlDoc);
         }
 
         let $seller = $xml.find('user').filter(function(){
@@ -329,9 +337,9 @@ $(function() {
             $seller.append('<items></items>');
         }
 
-        let itemId = 'item_' + Date.now();
+        const itemId = 'item_' + Date.now();
 
-        let itemXML = `<item>
+        const itemXML = `<item>
             <id>${itemId}</id>
             <name>${escapeHtml(name)}</name>
             <desc>${escapeHtml(desc)}</desc>
@@ -341,8 +349,8 @@ $(function() {
 
         $seller.find('items').append($(itemXML));
 
-        let serializer = new XMLSerializer();
-        let updatedXML = serializer.serializeToString(doc);
+        const serializer = new XMLSerializer();
+        const updatedXML = serializer.serializeToString(xmlDoc);
         localStorage.setItem('sellersXML', updatedXML);
 
         $('#itemMsg').html('<span class="success">Item added successfully!</span>');
@@ -350,7 +358,7 @@ $(function() {
         loadItems();
     });
 
-    $('#logoutBtn').click(()=>{
+    $('#logoutBtn').click(() => {
         sessionStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     });
@@ -358,5 +366,6 @@ $(function() {
     loadItems();
 });
 </script>
+
 </body>
 </html>
