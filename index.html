@@ -1,330 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VendorLine - Register & Login</title>
-<link rel="stylesheet" href="style.css" />
-<style>
-/* Minimal CSS to show tabs clearly */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 500px;
-  margin: 50px auto;
-  padding: 0 20px;
-  background: #f4f7fa;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 24px;
-  font-weight: 900;
-  font-size: 2.5rem;
-  letter-spacing: 3px;
-  color: #2c3e50;
-  user-select: none;
-}
-
-/* Tabs */
-.tab {
-  cursor: pointer;
-  display: inline-block;
-  padding: 12px 28px;
-  margin: 0 6px 10px 0;
-  font-weight: 700;
-  border-radius: 8px 8px 0 0;
-  background: #e1e5ec;
-  color: #444;
-  user-select: none;
-  transition: background-color 0.3s;
-}
-
-.tab.active {
-  background: #2980b9;
-  color: white;
-}
-
-.tab:hover:not(.active) {
-  background: #a8b6cd;
-}
-
-/* Form container */
-.tab-content {
-  background: white;
-  border-radius: 0 8px 8px 8px;
-  padding: 24px 28px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-label {
-  display: block;
-  margin-top: 16px;
-  font-weight: 600;
-  color: #34495e;
-}
-
-input[type=text],
-input[type=password],
-input[type=tel],
-input[type=email],
-select {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 1rem;
-  margin-top: 6px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-input[type=text]:focus,
-input[type=password]:focus,
-input[type=tel]:focus,
-input[type=email]:focus,
-select:focus {
-  border-color: #2980b9;
-  outline: none;
-  box-shadow: 0 0 8px rgba(41,128,185,0.6);
-}
-
-button {
-  margin-top: 30px;
-  width: 100%;
-  background: #2980b9;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 14px 0;
-  font-weight: 700;
-  font-size: 1.2rem;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background: #1f4e82;
-}
-
-.msg {
-  margin-top: 20px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-align: center;
-}
-
-.msg.error {
-  color: #e74c3c;
-}
-
-.msg.success {
-  color: #27ae60;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VendorLine - Register & Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 0 20px;
+      background: #f4f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 900;
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+      color: #2c3e50;
+      user-select: none;
+    }
+    .tab {
+      cursor: pointer;
+      display: inline-block;
+      padding: 12px 28px;
+      margin: 0 6px 10px 0;
+      font-weight: 700;
+      border-radius: 8px 8px 0 0;
+      background: #e1e5ec;
+      color: #444;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    .tab.active {
+      background: #2980b9;
+      color: white;
+    }
+    .tab:hover:not(.active) {
+      background: #a8b6cd;
+    }
+    .tab-content {
+      background: white;
+      border-radius: 0 8px 8px 8px;
+      padding: 24px 28px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    input[type=text],
+    input[type=password],
+    input[type=tel],
+    input[type=email],
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    input[type=text]:focus,
+    input[type=password]:focus,
+    input[type=tel]:focus,
+    input[type=email]:focus,
+    select:focus {
+      border-color: #2980b9;
+      outline: none;
+      box-shadow: 0 0 8px rgba(41,128,185,0.6);
+    }
+    button {
+      margin-top: 30px;
+      width: 100%;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 0;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: #1f4e82;
+    }
+    .msg {
+      margin-top: 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    .msg.error {
+      color: #e74c3c;
+    }
+    .msg.success {
+      color: #27ae60;
+    }
+  </style>
 </head>
 <body>
 
-<h1>VendorLine</h1>
+  <h1>VendorLine</h1>
 
-<!-- Tabs for Register and Login -->
-<div>
-  <span id="tabRegister" class="tab active" role="tab" tabindex="0" aria-selected="true">Register</span>
-  <span id="tabLogin" class="tab" role="tab" tabindex="0" aria-selected="false">Login</span>
-</div>
+  <div>
+    <span id="tabRegister" class="tab active" role="tab" tabindex="0" aria-selected="true">Register</span>
+    <span id="tabLogin" class="tab" role="tab" tabindex="0" aria-selected="false">Login</span>
+  </div>
 
-<!-- Register form -->
-<div id="contentRegister" class="tab-content" role="tabpanel" aria-hidden="false">
-  <form id="registerForm" novalidate>
-    <label for="regName">Business Name</label>
-    <input type="text" id="regName" name="regName" required autofocus />
+  <section id="contentRegister" class="tab-content" role="tabpanel" aria-hidden="false">
+    <form id="registerForm" novalidate>
+      <label for="regName">Business Name</label>
+      <input type="text" id="regName" name="regName" required autofocus />
 
-    <label for="regPass">Password</label>
-    <input type="password" id="regPass" name="regPass" required />
+      <label for="regPass">Password</label>
+      <input type="password" id="regPass" name="regPass" required />
 
-    <label for="regPhone">Phone Number</label>
-    <input type="tel" id="regPhone" name="regPhone" required />
+      <label for="regPhone">Phone Number</label>
+      <input type="tel" id="regPhone" name="regPhone" required />
 
-    <label for="regEmail">Email</label>
-    <input type="email" id="regEmail" name="regEmail" required />
+      <label for="regEmail">Email</label>
+      <input type="email" id="regEmail" name="regEmail" required />
 
-    <label for="regType">User Type</label>
-    <select id="regType" name="regType" required>
-      <option value="" disabled selected>Select user type</option>
-      <option value="buyer">Buyer</option>
-      <option value="seller">Seller</option>
-    </select>
+      <label for="regType">User Type</label>
+      <select id="regType" name="regType" required>
+        <option value="" disabled selected>Select your role</option>
+        <option value="buyer">Buyer</option>
+        <option value="seller">Seller</option>
+      </select>
 
-    <button type="submit">Register</button>
-  </form>
-  <div id="regMsg" class="msg" role="alert" aria-live="assertive"></div>
-</div>
+      <button type="submit">Register</button>
+    </form>
+    <div id="regMsg" class="msg" role="alert" aria-live="assertive"></div>
+  </section>
 
-<!-- Login form -->
-<div id="contentLogin" class="tab-content" role="tabpanel" style="display:none;" aria-hidden="true">
-  <form id="loginForm" novalidate>
-    <label for="loginName">Business Name</label>
-    <input type="text" id="loginName" name="loginName" required />
+  <section id="contentLogin" class="tab-content" role="tabpanel" aria-hidden="true" style="display:none;">
+    <form id="loginForm" novalidate>
+      <label for="loginName">Business Name</label>
+      <input type="text" id="loginName" name="loginName" required />
 
-    <label for="loginPass">Password</label>
-    <input type="password" id="loginPass" name="loginPass" required />
+      <label for="loginPass">Password</label>
+      <input type="password" id="loginPass" name="loginPass" required />
 
-    <label for="loginType">User Type</label>
-    <select id="loginType" name="loginType" required>
-      <option value="" disabled selected>Select user type</option>
-      <option value="buyer">Buyer</option>
-      <option value="seller">Seller</option>
-    </select>
+      <label for="loginType">User Type</label>
+      <select id="loginType" name="loginType" required>
+        <option value="" disabled selected>Select your role</option>
+        <option value="buyer">Buyer</option>
+        <option value="seller">Seller</option>
+      </select>
 
-    <button type="submit">Login</button>
-  </form>
-  <div id="loginMsg" class="msg" role="alert" aria-live="assertive"></div>
-</div>
+      <button type="submit">Login</button>
+    </form>
+    <div id="loginMsg" class="msg" role="alert" aria-live="assertive"></div>
+  </section>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(function() {
-  // Tab switches with proper ARIA attributes
-  $('#tabRegister').click(function() {
-    $('.tab').removeClass('active').attr('aria-selected', 'false');
-    $(this).addClass('active').attr('aria-selected', 'true');
-    $('#contentRegister').show().attr('aria-hidden', 'false');
-    $('#contentLogin').hide().attr('aria-hidden', 'true');
-    clearMessages();
-    $('#regName').focus();
-  });
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function() {
+      function switchTab(tab) {
+        if(tab === 'register') {
+          $('#tabRegister').addClass('active').attr({'aria-selected':'true', 'tabindex':0}).focus();
+          $('#tabLogin').removeClass('active').attr({'aria-selected':'false', 'tabindex':-1});
+          $('#contentRegister').show().attr('aria-hidden','false');
+          $('#contentLogin').hide().attr('aria-hidden','true');
+          $('#regName').focus();
+        } else {
+          $('#tabLogin').addClass('active').attr({'aria-selected':'true', 'tabindex':0}).focus();
+          $('#tabRegister').removeClass('active').attr({'aria-selected':'false', 'tabindex':-1});
+          $('#contentLogin').show().attr('aria-hidden','false');
+          $('#contentRegister').hide().attr('aria-hidden','true');
+          $('#loginName').focus();
+        }
+        $('#regMsg, #loginMsg').empty();
+      }
 
-  $('#tabLogin').click(function() {
-    $('.tab').removeClass('active').attr('aria-selected', 'false');
-    $(this).addClass('active').attr('aria-selected', 'true');
-    $('#contentRegister').hide().attr('aria-hidden', 'true');
-    $('#contentLogin').show().attr('aria-hidden', 'false');
-    clearMessages();
-    $('#loginName').focus();
-  });
+      $('#tabRegister').click(()=>switchTab('register'));
+      $('#tabLogin').click(()=>switchTab('login'));
 
-  function clearMessages() {
-    $('#regMsg').empty();
-    $('#loginMsg').empty();
-  }
+      // Keyboard accessibility for tabs
+      $('#tabRegister, #tabLogin').keydown(function(e){
+        if(e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          if(this.id === 'tabRegister') switchTab('login');
+          else switchTab('register');
+        }
+      });
 
-  // Helper: escape XML/HTML special chars
-  function escapeXml(text) {
-    return text.replace(/[<>&'"]/g, function(c) {
-      return {'<':'&lt;', '>':'&gt;', '&':'&amp;', '\'':'&apos;', '"':'&quot;'}[c];
+      function escapeXml(text) {
+        return text.replace(/[<>&'"]/g, function (c) {
+          return {
+            '<': '&lt;',
+            '>': '&gt;',
+            '&': '&amp;',
+            '\'': '&apos;',
+            '"': '&quot;'
+          }[c];
+        });
+      }
+
+      $('#registerForm').submit(function(e) {
+        e.preventDefault();
+        $('#regMsg').empty();
+
+        const name = $('#regName').val().trim();
+        const pass = $('#regPass').val();
+        const phone = $('#regPhone').val().trim();
+        const email = $('#regEmail').val().trim();
+        const userType = $('#regType').val();
+
+        if(!name || !pass || !phone || !email || !userType){
+          $('#regMsg').html('<span class="msg error">Please fill in all fields.</span>');
+          return;
+        }
+
+        const storageKey = userType + 'sXML';
+        const storedXml = localStorage.getItem(storageKey);
+        if(storedXml) {
+          const doc = $.parseXML(storedXml);
+          const exists = $(doc).find('user').filter(function() {
+            return $(this).find('name').text().toLowerCase() === name.toLowerCase();
+          }).length > 0;
+          if(exists) {
+            $('#regMsg').html('<span class="msg error">Business name already registered for this user type.</span>');
+            return;
+          }
+        }
+
+        const newUserXml = `<user>
+          <name>${escapeXml(name)}</name>
+          <password>${escapeXml(pass)}</password>
+          <phone>${escapeXml(phone)}</phone>
+          <email>${escapeXml(email)}</email>
+          <rating>0</rating>
+          ${userType === 'buyer' ? '<purchases></p><ratedItems></ratedItems>' : '<items></items>'}
+        </user>`;
+
+        let xmlDoc, $xml, serializer = new XMLSerializer();
+        if(storedXml) {
+          xmlDoc = $.parseXML(storedXml);
+          $xml = $(xmlDoc);
+          $xml.find(userType + 's').append($(newUserXml));
+        } else {
+          xmlDoc = $.parseXML(`<${userType}s>${newUserXml}</${userType}s>`);
+          $xml = $(xmlDoc);
+        }
+
+        localStorage.setItem(storageKey, serializer.serializeToString(xmlDoc));
+        $('#regMsg').html('<span class="msg success">Registration successful! You may now log in.</span>');
+        this.reset();
+      });
+
+      $('#loginForm').submit(function(e) {
+        e.preventDefault();
+        $('#loginMsg').empty();
+
+        const name = $('#loginName').val().trim();
+        const pass = $('#loginPass').val();
+        const userType = $('#loginType').val();
+
+        if(!name || !pass || !userType) {
+          $('#loginMsg').html('<span class="msg error">Please fill in all fields.</span>');
+          return;
+        }
+
+        const storageKey = userType + 'sXML';
+        const storedXml = localStorage.getItem(storageKey);
+        if(!storedXml) {
+          $('#loginMsg').html('<span class="msg error">No registered users for this user type.</span>');
+          return;
+        }
+
+        const doc = $.parseXML(storedXml);
+        let loggedUser = null;
+        $(doc).find('user').each(function() {
+          const uname = $(this).find('name').text();
+          const upass = $(this).find('password').text();
+          if(uname.toLowerCase() === name.toLowerCase() && upass === pass) {
+            loggedUser = {
+              name: uname,
+              phone: $(this).find('phone').text(),
+              email: $(this).find('email').text(),
+              userType: userType
+            };
+            return false; // exit loop
+          }
+        });
+
+        if(!loggedUser) {
+          $('#loginMsg').html('<span class="msg error">Incorrect business name or password.</span>');
+          return;
+        }
+
+        sessionStorage.setItem('currentUser', JSON.stringify(loggedUser));
+        $('#loginMsg').html('<span class="msg success">Login successful! Redirecting...</span>');
+
+        setTimeout(() => {
+          if(userType === 'seller') window.location.href = 'seller_dashboard.html';
+          else window.location.href = 'buyer_dashboard.html';
+        }, 1000);
+      });
     });
-  }
-
-  // Registration handler
-  $('#registerForm').submit(function(e) {
-    e.preventDefault();
-    clearMessages();
-
-    let name = $('#regName').val().trim();
-    let pass = $('#regPass').val();
-    let phone = $('#regPhone').val().trim();
-    let email = $('#regEmail').val().trim();
-    let userType = $('#regType').val();
-
-    if (!name || !pass || !phone || !email || !userType) {
-      $('#regMsg').html('<span class="error">Please fill in all fields.</span>');
-      return;
-    }
-
-    let key = userType + 'sXML';
-    let storedXml = localStorage.getItem(key);
-    if (storedXml) {
-      let doc = $.parseXML(storedXml);
-      let exists = $(doc).find('user').filter(function() {
-        return $(this).find('name').text().toLowerCase() === name.toLowerCase();
-      }).length > 0;
-      if (exists) {
-        $('#regMsg').html('<span class="error">The business name is already registered for this user type.</span>');
-        return;
-      }
-    }
-
-    let userXml = `<user>
-      <name>${escapeXml(name)}</name>
-      <password>${escapeXml(pass)}</password>
-      <phone>${escapeXml(phone)}</phone>
-      <email>${escapeXml(email)}</email>
-      <rating>0</rating>
-      ${userType === 'buyer' ? '<purchases></purchases><ratedItems></ratedItems>' : '<items></items>'}
-    </user>`;
-
-    let xmlDoc, serializer = new XMLSerializer();
-    if (storedXml) {
-      xmlDoc = $.parseXML(storedXml);
-      $(xmlDoc).find(userType + 's').append($(userXml));
-    } else {
-      xmlDoc = $.parseXML(`<${userType}s>${userXml}</${userType}s>`);
-    }
-
-    let newXmlStr = serializer.serializeToString(xmlDoc);
-    localStorage.setItem(key, newXmlStr);
-
-    $('#regMsg').html('<span class="success">Registration successful! You can now login.</span>');
-    this.reset();
-  });
-
-  // Login handler
-  $('#loginForm').submit(function(e) {
-    e.preventDefault();
-    clearMessages();
-
-    let name = $('#loginName').val().trim();
-    let pass = $('#loginPass').val();
-    let userType = $('#loginType').val();
-
-    if(!name || !pass || !userType) {
-      $('#loginMsg').html('<span class="error">Please fill in all fields.</span>');
-      return;
-    }
-
-    let key = userType + 'sXML';
-    let storedXml = localStorage.getItem(key);
-
-    if (!storedXml) {
-      $('#loginMsg').html('<span class="error">No registered users found for this type.</span>');
-      return;
-    }
-
-    let doc = $.parseXML(storedXml);
-    let loggedUser = null;
-    $(doc).find('user').each(function() {
-      let uname = $(this).find('name').text();
-      let upass = $(this).find('password').text();
-      if (uname.toLowerCase() === name.toLowerCase() && upass === pass) {
-        loggedUser = {
-          name: uname,
-          phone: $(this).find('phone').text(),
-          email: $(this).find('email').text(),
-          userType: userType
-        };
-        return false; // break loop
-      }
-    });
-
-    if (!loggedUser) {
-      $('#loginMsg').html('<span class="error">Incorrect business name or password.</span>');
-      return;
-    }
-
-    // All good — store session info and redirect
-    sessionStorage.setItem('currentUser', JSON.stringify(loggedUser));
-    $('#loginMsg').html('<span class="success">Login successful! Redirecting...</span>');
-
-    setTimeout(function() {
-      if (userType === 'seller') {
-        window.location.href = 'seller_dashboard.html';
-      } else {
-        window.location.href = 'buyer_dashboard.html';
-      }
-    }, 1000);
-  });
-});
-</script>
-
+  </script>
 </body>
 </html>
