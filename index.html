@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VendorLine - Register & Login</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+    <h1 class="site-title">VendorLine</h1>
+</header>
+
+<h2>Register / Login</h2>
+
+<div>
+    <span class="tab active" id="regTab">Register</span>
+    <span class="tab" id="loginTab">Login</span>
+</div>
+
+<div class="tab-content active" id="regContent">
+    <form id="registerForm" novalidate>
+        <label for="regName">Business Name</label>
+        <input type="text" id="regName" required>
+
+        <label for="regPass">Password</label>
+        <input type="password" id="regPass" required>
+
+        <label for="regPhone">Phone Number</label>
+        <input type="tel" id="regPhone" required>
+
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" required>
+
+        <label for="regType">User Type</label>
+        <select id="regType" required>
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+        </select>
+
+        <button type="submit">Register</button>
+    </form>
+    <div id="regMsg" class="msg"></div>
+</div>
+
+<div class="tab-content" id="loginContent">
+    <form id="loginForm" novalidate>
+        <label for="loginName">Business Name</label>
+        <input type="text" id="loginName" required>
+
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" required>
+
+        <label for="loginType">User Type</label>
+        <select id="loginType" required>
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+        </select>
+
+        <button type="submit">Login</button>
+    </form>
+    <div id="loginMsg" class="msg"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function() {
+    $('.tab').click(function(){
+        $('.tab').removeClass('active');
+        $(this).addClass('active');
+        $('.tab-content').removeClass('active');
+        if(this.id === 'regTab'){
+            $('#regContent').addClass('active');
+        } else {
+            $('#loginContent').addClass('active');
+        }
+        $('#regMsg, #loginMsg').empty();
+    });
+
+    $('#registerForm').on('submit', function(e){
+        e.preventDefault();
+        $('#regMsg').empty();
+
+        let name = $('#regName').val().trim();
+        let pass = $('#regPass').val();
+        let phone = $('#regPhone').val().trim();
+        let email = $('#regEmail').val().trim();
+        let userType = $('#regType').val();
+
+        if(!name || !pass || !phone || !email || !userType){
+            $('#regMsg').html('<div class="error">All fields are required.</div>');
+            return;
+        }
+
+        let xmlKey = userType + 'sXML';
+        let dataXML = localStorage.getItem(xmlKey);
+        if(dataXML) {
+            let doc = $.parseXML(dataXML);
+            let exists = $(doc).find('user').filter(function(){
+                return $(this).find('name').text().toLowerCase() === name.toLowerCase();
+            }).length > 0;
+            if(exists){
+                $('#regMsg').html('<div class="error">Business name already registered for this user type.</div>');
+                return;
+            }
+        }
+
+        let userXML = `<user>
+            <name>${escapeXml(name)}</name>
+            <password>${escapeXml(pass)}</password>
+            <phone>${escapeXml(phone)}</phone>
+            <email>${escapeXml(email)}</email>
+            <rating>0</rating>
+            ${userType === 'buyer' ? '<purchases></purchases>' : '<items></items>'}
+        </user>`;
+
+        let doc, serializer = new XMLSerializer();
+        if(dataXML){
+            doc = $.parseXML(dataXML);
+            $(doc).find(userType + 's').append($(userXML));
+        } else {
+            doc = $.parseXML(`<${userType}s>${userXML}</${userType}s>`);
+        }
+        let updated = serializer.serializeToString(doc);
+        localStorage.setItem(xmlKey, updated);
+
+        $('#regMsg').html('<div class="success">Registration successful! You may now log in.</div>');
+        this.reset();
+    });
+
+    $('#loginForm').on('submit', function(e){
+        e.preventDefault();
+        $('#loginMsg').empty();
+
+        let name = $('#loginName').val().trim();
+        let pass = $('#loginPass').val();
+        let userType = $('#loginType').val();
+
+        if(!name || !pass || !userType){
+            $('#loginMsg').html('<div class="error">Please fill all fields.</div>');
+            return;
+        }
+
+        let xmlKey = userType + 'sXML';
+        let dataXML = localStorage.getItem(xmlKey);
+        if(!dataXML){
+            $('#loginMsg').html('<div class="error">No users found for this type.</div>');
+            return;
+        }
+        let doc = $.parseXML(dataXML);
+        let foundUser = null;
+        $(doc).find('user').each(function(){
+            if(
+                $(this).find('name').text().toLowerCase() === name.toLowerCase()
+                && $(this).find('password').text() === pass
+            ){
+                foundUser = {
+                    name: $(this).find('name').text(),
+                    phone: $(this).find('phone').text(),
+                    email: $(this).find('email').text(),
+                    userType: userType
+                };
+                return false;
+            }
+        });
+        if(foundUser){
+            $('#loginMsg').html('<div class="success">Login successful! Redirecting...</div>');
+            sessionStorage.setItem('currentUser', JSON.stringify(foundUser));
+            setTimeout(() => {
+                if(foundUser.userType === 'seller'){
+                    window.location.href = 'seller_dashboard.html';
+                } else {
+                    window.location.href = 'buyer_dashboard.html';
+                }
+            }, 1000);
+        } else {
+            $('#loginMsg').html('<div class="error">Invalid business name or password.</div>');
+        }
+    });
+
+    function escapeXml(str) {
+        return str.replace(/[<>&'"]/g, function(c) {
+            switch (c) {
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+                case '&': return '&amp;';
+                case '\'': return '&apos;';
+                case '"': return '&quot;';
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+/* style.css - Shared Modern Styles */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f7f9;
+    margin: 20px auto;
+    max-width: 960px;
+    color: #222;
+    line-height: 1.5;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1.site-title {
+    font-weight: 900;
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2, h3 {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+/* Tabs on index.html */
+.tab {
+    cursor: pointer;
+    padding: 12px 24px;
+    border: 1px solid #bbb;
+    background-color: #eaecef;
+    margin-right: 6px;
+    border-radius: 8px 8px 0 0;
+    font-weight: 700;
+    color: #444;
+    user-select: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tab.active {
+    background-color: #2980b9;
+    color: white;
+    border-bottom: 2px solid white;
+}
+
+.tab:hover {
+    background-color: #dbe1e7;
+}
+
+/* Tab content for index.html */
+.tab-content {
+    display: none;
+    background-color: white;
+    padding: 25px;
+    border: 1px solid #bbb;
+    border-top: none;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Forms */
+label {
+    display: block;
+    margin: 14px 0 6px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="tel"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 8px rgba(41, 128, 185, 0.4);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Buttons */
+button {
+    margin-top: 20px;
+    padding: 12px 28px;
+    background-color: #2980b9;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s;
+}
+
+button:hover:not(:disabled) {
+    background-color: #1e497a;
+}
+
+button:disabled,
+button[disabled] {
+    background-color: #bbb;
+    cursor: not-allowed;
+}
+
+/* Messages */
+.msg {
+    margin-top: 16px;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.error {
+    color: #e74c3c;
+}
+
+.success {
+    color: #27ae60;
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+li {
+    margin-bottom: 16px;
+}
+
+/* SellerItems */
+#itemsList ul li.item {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+/* Buyer item cards */
+.item-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 520px;
+    transition: box-shadow 0.3s ease;
+}
+
+.item-card:hover {
+    box-shadow: 0 12px 35px rgba(0,0,0,0.13);
+}
+
+.item-card b {
+    font-size: 1.3rem;
+    color: #2c3e50;
+}
+
+.item-card i {
+    color: #34495e;
+}
+
+.item-card small,
+.seller-contact {
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.seller-contact {
+    margin-top: 10px;
+    font-style: normal;
+}
+
+.item-card .price {
+    margin: 10px 0 14px;
+    color: #2980b9;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+input[type=number] {
+    width: 80px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    vertical-align: middle;
+}
+
+input[type=number]:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 10px rgba(41, 128, 185, 0.5);
+}
+
+button.buyBtn,
+button.rateBtn {
+    background-color: #2980b9;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    padding: 10px 22px;
+    margin-left: 14px;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background-color 0.3s ease;
+}
+
+button.buyBtn:hover,
+button.rateBtn:hover {
+    background-color: #1e497a;
+}
+
+button.buyBtn:disabled,
+button.rateBtn:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+}
+
+/* Feedback messages */
+.msg,
+.rateMsg,
+.buyMsg {
+    font-size: 0.95rem;
+    margin-left: 12px;
+    vertical-align: middle;
+    display: inline-block;
+    color: #27ae60;
+}
+
+/* Search input on buyer_dashboard */
+#searchInput {
+    width: 100%;
+    max-width: 480px;
+    padding: 14px 18px;
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+    border: 2px solid #2980b9;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #1e497a;
+    box-shadow: 0 0 12px rgba(41, 128, 185, 0.5);
+    outline: none;
+}
+
+/* Logout button styles on dashboards */
+#logoutBtn, #logoutSellerBtn {
+    background-color: #c0392b;
+    padding: 14px 32px;
+    margin-top: 40px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+#logoutBtn:hover, #logoutSellerBtn:hover {
+    background-color: #962d22;
+}
+
+/* Responsive Styling */
+@media (max-width: 720px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="number"],
+    textarea,
+    select,
+    #searchInput {
+        max-width: 100%;
+    }
+
+    .item-card {
+        max-width: 100%;
+    }
+
+    button.buyBtn,
+    button.rateBtn {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    input[type=number] {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 6px;
+    }
+}

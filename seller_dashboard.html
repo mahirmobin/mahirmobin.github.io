@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VendorLine - Seller Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+    <h1 class="site-title">VendorLine</h1>
+</header>
+
+<h2>Seller Dashboard</h2>
+<div id="welcomeMsg"></div>
+
+<h3>Add New Item</h3>
+<form id="addItemForm" novalidate>
+    <label for="itemName">Item Name</label>
+    <input type="text" id="itemName" required>
+
+    <label for="itemDesc">Description</label>
+    <textarea id="itemDesc" rows="4" required></textarea>
+
+    <label for="itemPrice">Price (₹)</label>
+    <input type="number" id="itemPrice" min="0" step="0.01" required>
+
+    <button type="submit">Add Item</button>
+</form>
+<div id="itemMsg" class="msg"></div>
+
+<h3>Your Items</h3>
+<div id="itemsList"></div>
+
+<button id="logoutBtn">Logout</button>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function(){
+    let currentUserRaw = sessionStorage.getItem('currentUser');
+    if(!currentUserRaw){
+        alert('Please login as seller first.');
+        window.location.href = 'index.html';
+        return;
+    }
+    let currentUser = JSON.parse(currentUserRaw);
+    if(currentUser.userType !== 'seller'){
+        alert('Only sellers can access the seller dashboard.');
+        window.location.href = 'index.html';
+        return;
+    }
+    $('#welcomeMsg').text(`Welcome, ${currentUser.name}`);
+
+    function loadItems(){
+        let xmlStr = localStorage.getItem('sellersXML');
+        if(!xmlStr){
+            $('#itemsList').html('<p>You have no items yet.</p>');
+            return;
+        }
+        let doc = $.parseXML(xmlStr);
+        let $xml = $(doc);
+
+        let $seller = $xml.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        });
+        if($seller.length === 0){
+            $('#itemsList').html('<p>You have no items yet.</p>');
+            return;
+        }
+
+        let $items = $seller.find('items item');
+        if($items.length === 0){
+            $('#itemsList').html('<p>You have no items yet.</p>');
+            return;
+        }
+
+        let html = '<ul>';
+        $items.each(function(){
+            let $item = $(this);
+            let name = $item.find('name').text();
+            let desc = $item.find('desc').text();
+            let price = $item.find('price').text();
+
+            let ratings = $item.find('ratings rating').map(function(){
+                return parseFloat($(this).text());
+            }).get();
+
+            let avgRating = 'No ratings';
+            if(ratings.length > 0){
+                let sum = ratings.reduce((a,b) => a+b, 0);
+                avgRating = (sum / ratings.length).toFixed(2) + ` (${ratings.length} ratings)`;
+            }
+
+            html += `<li class="item">
+                <b>${escapeHtml(name)}</b> - ₹${parseFloat(price).toFixed(2)}<br>
+                <small>${escapeHtml(desc)}</small><br>
+                Average rating: <strong>${avgRating}</strong>
+            </li>`;
+        });
+        html += '</ul>';
+        $('#itemsList').html(html);
+    }
+
+    $('#addItemForm').on('submit', function(e){
+        e.preventDefault();
+        $('#itemMsg').empty();
+
+        let itemName = $('#itemName').val().trim();
+        let itemDesc = $('#itemDesc').val().trim();
+        let itemPrice = parseFloat($('#itemPrice').val());
+
+        if(!itemName || !itemDesc || isNaN(itemPrice) || itemPrice < 0){
+            $('#itemMsg').html('<div class="error">Please fill out all fields correctly.</div>');
+            return;
+        }
+
+        let xmlStr = localStorage.getItem('sellersXML');
+        let doc, $xml;
+        if(xmlStr){
+            doc = $.parseXML(xmlStr);
+            $xml = $(doc);
+        } else {
+            doc = new DOMParser().parseFromString('<sellers></sellers>', 'text/xml');
+            $xml = $(doc);
+        }
+
+        let $seller = $xml.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        });
+
+        if($seller.length === 0){
+            let userXML = `<user>
+                <name>${escapeXml(currentUser.name)}</name>
+                <password></password>
+                <phone></phone>
+                <email></email>
+                <rating>0</rating>
+                <items></items>
+            </user>`;
+            $xml.find('sellers').append($(userXML));
+            $seller = $xml.find('user').filter(function(){
+                return $(this).find('name').text() === currentUser.name;
+            });
+        }
+
+        if($seller.find('items').length === 0){
+            $seller.append('<items></items>');
+        }
+
+        let itemId = 'item_' + Date.now();
+
+        let itemXML = `<item>
+            <id>${itemId}</id>
+            <name>${escapeXml(itemName)}</name>
+            <desc>${escapeXml(itemDesc)}</desc>
+            <price>${itemPrice.toFixed(2)}</price>
+            <ratings></ratings>
+        </item>`;
+        $seller.find('items').append($(itemXML));
+
+        let serializer = new XMLSerializer();
+        let updatedXML = serializer.serializeToString(doc);
+        localStorage.setItem('sellersXML', updatedXML);
+
+        $('#itemMsg').html('<div class="success">Item added successfully!</div>');
+        this.reset();
+        loadItems();
+    });
+
+    $('#logoutBtn').click(function(){
+        sessionStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+    });
+
+    function escapeXml(unsafe) {
+        return unsafe.replace(/[<>&'"]/g, function(c) {
+            switch(c) {
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+                case '&': return '&amp;';
+                case '\'': return '&apos;';
+                case '"': return '&quot;';
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        return text
+           .replace(/&/g,"&amp;")
+           .replace(/</g,"&lt;")
+           .replace(/>/g,"&gt;")
+           .replace(/"/g,"&quot;")
+           .replace(/'/g,"&#039;");
+    }
+
+    loadItems();
+});
+</script>
+</body>
+</html>
