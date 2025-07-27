@@ -6,14 +6,13 @@
 <title>VendorLine - Buyer Dashboard</title>
 <link rel="stylesheet" href="style.css" />
 <style>
-/* Fixed header with title and logout */
+/* Fixed header with site name */
 header {
     position: fixed;
     top: 0; left: 0; right: 0;
     background: white;
-    z-index: 999;
-    height: 60px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,9 +20,10 @@ header {
     color: #2c3e50;
     font-size: 2.2rem;
     user-select: none;
+    z-index: 1000;
 }
 
-/* Logout top-right */
+/* Logout button top-right */
 #logoutBtn {
     position: fixed;
     top: 12px;
@@ -46,6 +46,7 @@ header {
     background-color: #962d22;
 }
 
+/* Body padding to avoid header overlay */
 body {
     padding-top: 70px;
     max-width: 960px;
@@ -55,7 +56,7 @@ body {
     color: #222;
 }
 
-/* Title */
+/* Page Title */
 h2 {
     text-align: center;
     font-weight: 700;
@@ -74,18 +75,18 @@ h2 {
     border-radius: 8px;
     transition: border-color 0.3s ease;
 }
-
 #searchInput:focus {
     border-color: #1e497a;
     outline: none;
     box-shadow: 0 0 12px rgba(41, 128, 185, 0.5);
 }
 
-/* Items list as line boxes */
+/* Item line box container */
 #itemsContainer {
     margin: 0 20px;
 }
 
+/* Item line box style */
 .item-card {
     background: white;
     box-shadow: 0 4px 14px rgba(0,0,0,0.06);
@@ -100,17 +101,16 @@ h2 {
     min-height: 90px;
 }
 
+/* Left info section */
 .item-info {
     max-width: 60%;
     user-select: text;
 }
-
 .item-info b {
     font-size: 1.3rem;
     color: #2c3e50;
     display: block;
 }
-
 .item-info i {
     color: #34495e;
     font-weight: 600;
@@ -119,7 +119,6 @@ h2 {
     margin-top: 2px;
     opacity: 0.85;
 }
-
 .item-info small {
     color: #555;
     font-size: 0.9rem;
@@ -130,6 +129,7 @@ h2 {
     user-select: text;
 }
 
+/* Seller contact block */
 .seller-contact {
     font-size: 0.85rem;
     color: #666;
@@ -137,19 +137,18 @@ h2 {
     font-style: normal;
     user-select: text;
 }
-
 .seller-contact a {
     color: #2980b9;
     text-decoration: none;
     display: block;
     margin-top: 3px;
 }
-
 .seller-contact a:hover,
 .seller-contact a:focus {
     text-decoration: underline;
 }
 
+/* Price block */
 .price {
     color: #2980b9;
     font-weight: 700;
@@ -160,6 +159,7 @@ h2 {
     margin-left: 12px;
 }
 
+/* Controls block */
 .controls {
     display: flex;
     align-items: center;
@@ -169,13 +169,11 @@ h2 {
     margin-left: 12px;
     flex-shrink: 0;
 }
-
 .controls label {
     font-weight: 600;
     font-size: 0.9rem;
     user-select: none;
 }
-
 .controls input[type=number] {
     width: 70px;
     padding: 8px 12px;
@@ -186,13 +184,11 @@ h2 {
     margin-right: 12px;
     user-select: text;
 }
-
 .controls input[type=number]:focus {
     outline: none;
     border-color: #2980b9;
     box-shadow: 0 0 10px rgba(41, 128, 185, 0.4);
 }
-
 .controls button {
     background-color: #2980b9;
     border-radius: 8px;
@@ -205,11 +201,9 @@ h2 {
     transition: background-color 0.3s ease;
     user-select: none;
 }
-
 .controls button:hover:not(:disabled) {
     background-color: #1e497a;
 }
-
 .controls button:disabled {
     background-color: #bbb;
     cursor: not-allowed;
@@ -225,6 +219,7 @@ h2 {
     user-select: none;
 }
 
+/* Responsive */
 @media (max-width: 700px) {
     .item-card {
         flex-direction: column;
@@ -248,6 +243,7 @@ h2 {
         width: 100%;
     }
 }
+
 </style>
 </head>
 <body>
@@ -259,6 +255,7 @@ h2 {
 
 <main>
     <h2>Buyer Dashboard</h2>
+
     <input type="search" id="searchInput" placeholder="Search items by name..." aria-label="Search items by name" />
 
     <section id="itemsContainer" aria-live="polite" aria-atomic="true"></section>
@@ -268,7 +265,7 @@ h2 {
 
 <script>
 $(function(){
-    // Check user session & role
+    // Check user session and role
     const userRaw = sessionStorage.getItem('currentUser');
     if(!userRaw){
         alert('Please login as buyer first.');
@@ -284,12 +281,11 @@ $(function(){
 
     let allItems = [];
 
-    // Load seller items and buyer purchases
     function loadItems() {
         const sellersXML = localStorage.getItem('sellersXML');
         const buyersXML = localStorage.getItem('buyersXML');
 
-        if(!sellersXML) {
+        if(!sellersXML){
             $('#itemsContainer').html('<p>No sellers or items available.</p>');
             return;
         }
@@ -304,7 +300,13 @@ $(function(){
             return $(this).find('name').text() === currentUser.name;
         }) : $();
 
-        const purchasedIds = $buyer.length > 0 ? $buyer.find('purchases item').map(function(){ return $(this).text() }).get() : [];
+        // Purchases
+        const purchasedIds = $buyer.length > 0 ? $buyer.find('purchases item').map(function(){ return $(this).text(); }).get() : [];
+
+        // Rated items (to decide showing rating form or buy button)
+        const ratedIds = $buyer.length > 0 && $buyer.find('ratedItems').length > 0
+            ? $buyer.find('ratedItems item').map(function() { return $(this).text(); }).get()
+            : [];
 
         allItems = [];
 
@@ -326,8 +328,12 @@ $(function(){
                     avgRating = avgNum.toFixed(2) + ` (${ratingsArr.length} ratings)`;
                 }
 
+                const id = $item.find('id').text();
+                const purchased = purchasedIds.includes(id);
+                const rated = ratedIds.includes(id);
+
                 allItems.push({
-                    id: $item.find('id').text(),
+                    id,
                     name: $item.find('name').text(),
                     desc: $item.find('desc').text(),
                     price: parseFloat($item.find('price').text()).toFixed(2),
@@ -336,7 +342,8 @@ $(function(){
                     sellerPhone,
                     avgRating,
                     avgNum,
-                    purchased: purchasedIds.includes($item.find('id').text())
+                    purchased,
+                    rated
                 });
             });
         });
@@ -349,8 +356,7 @@ $(function(){
         renderItems(allItems);
     }
 
-    // Render items as horizontal line boxes
-    function renderItems(items) {
+    function renderItems(items){
         items.sort((a,b) => b.avgNum - a.avgNum);
         let html = '';
         items.forEach(item => {
@@ -369,38 +375,38 @@ $(function(){
             html += `<div class="price">₹${item.price}</div>`;
 
             html += `<div class="controls" role="group" aria-label="Actions for item ${escapeHtml(item.name)}">`;
-            if(item.purchased){
+
+            if(!item.purchased){
+                // Show buy button if NOT purchased
+                html += `<button class="buyBtn" data-id="${item.id}" aria-label="Buy item ${escapeHtml(item.name)}">Buy</button>`;
+                html += `<span class="buyMsg" id="buymsg_${item.id}" aria-live="polite"></span>`;
+            } else if(item.purchased && !item.rated){
+                // Purchased and NOT rated => show rating form
                 html += `<label for="rate_${item.id}">Rate:</label>`;
                 html += `<input type="number" id="rate_${item.id}" min="0" max="5" step="0.1" aria-describedby="msg_${item.id}" />`;
                 html += `<button class="rateBtn" data-id="${item.id}" aria-label="Submit rating for ${escapeHtml(item.name)}">Submit Rating</button>`;
                 html += `<span class="rateMsg" id="msg_${item.id}" aria-live="polite"></span>`;
             } else {
+                // Purchased and rated => show Buy button again; rating input hidden
                 html += `<button class="buyBtn" data-id="${item.id}" aria-label="Buy item ${escapeHtml(item.name)}">Buy</button>`;
                 html += `<span class="buyMsg" id="buymsg_${item.id}" aria-live="polite"></span>`;
             }
-            html += `</div>`;
 
+            html += `</div>`;
             html += `<div>Average Rating: <b>${item.avgRating}</b></div>`;
             html += `</article>`;
         });
         $('#itemsContainer').html(html);
     }
 
-    // Search filter by item name
-    $('#searchInput').on('input', function(){
-        const query = $(this).val().toLowerCase().trim();
-        const filtered = allItems.filter(item => item.name.toLowerCase().includes(query));
-        renderItems(filtered);
-    });
-
-    // Buy button click
+    // Handle Buy button click
     $('#itemsContainer').on('click', '.buyBtn', function(){
         const itemId = $(this).data('id');
         const $msg = $('#buymsg_' + itemId);
         $msg.text('');
 
         const buyersXML = localStorage.getItem('buyersXML');
-        if(!buyersXML) {
+        if(!buyersXML){
             $msg.text('Error: No buyers data.').css('color', 'red');
             return;
         }
@@ -411,13 +417,13 @@ $(function(){
         const $buyer = $buyers.find('user').filter(function(){
             return $(this).find('name').text() === currentUser.name;
         });
-        if($buyer.length === 0) {
+        if($buyer.length === 0){
             $msg.text('Buyer data not found.').css('color', 'red');
             return;
         }
 
         if($buyer.find('purchases').length === 0){
-            $buyer.append('<purchases></purchases>');
+            $buyer.append('<purchases></p>');
         }
 
         const purchasedIds = $buyer.find('purchases item').map(function(){ return $(this).text(); }).get();
@@ -433,7 +439,6 @@ $(function(){
 
         $msg.text('Purchase successful!').css('color', 'green');
 
-        // Update cache and refresh UI
         allItems.forEach(item => {
             if(item.id === itemId) item.purchased = true;
         });
@@ -441,7 +446,7 @@ $(function(){
         renderItems(allItems);
     });
 
-    // Rate button click
+    // Handle Rate button click
     $('#itemsContainer').on('click', '.rateBtn', function(){
         const itemId = $(this).data('id');
         const $input = $('#rate_' + itemId);
@@ -464,11 +469,13 @@ $(function(){
         const $sellers = $(sellersDoc);
 
         let $foundItem = null;
+        let sellerName = null;
         $sellers.find('user').each(function(){
             const $user = $(this);
             $user.find('items item').each(function(){
                 if($(this).find('id').text() === itemId){
                     $foundItem = $(this);
+                    sellerName = $user.find('name').text();
                     return false;
                 }
             });
@@ -485,12 +492,48 @@ $(function(){
         }
         $foundItem.find('ratings').append(`<rating>${rateVal}</rating>`);
 
-        const updatedXML = new XMLSerializer().serializeToString(sellersDoc);
-        localStorage.setItem('sellersXML', updatedXML);
+        const updatedSellersXML = new XMLSerializer().serializeToString(sellersDoc);
+        localStorage.setItem('sellersXML', updatedSellersXML);
 
-        $msg.text('Rating submitted!').css('color', 'green');
+        // Update buyer XML ratedItems node
+        let buyersXML = localStorage.getItem('buyersXML');
+        if(!buyersXML){
+            $msg.text('Error: No buyers data.').css('color', 'red');
+            return;
+        }
+
+        let buyersDoc = $.parseXML(buyersXML);
+        let $buyers = $(buyersDoc);
+
+        const $buyer = $buyers.find('user').filter(function(){
+            return $(this).find('name').text() === currentUser.name;
+        });
+
+        if($buyer.length === 0){
+            $msg.text('Buyer data not found.').css('color', 'red');
+            return;
+        }
+
+        if($buyer.find('ratedItems').length === 0){
+            $buyer.append('<ratedItems></ratedItems>');
+        }
+
+        $buyer.find('ratedItems').append(`<item>${itemId}</item>`);
+
+        let updatedBuyersXML = new XMLSerializer().serializeToString(buyersDoc);
+        localStorage.setItem('buyersXML', updatedBuyersXML);
+
+        // Reset input and update UI (hide rating form, show buy button again)
+        $msg.text('Rating submitted! Thank you.').css('color', 'green');
         $input.val('');
-        loadItems();
+        allItems.forEach(item => {
+            if(item.id === itemId){
+                item.rated = true;
+                item.purchased = true;
+            }
+        });
+
+        renderItems(allItems);
     });
 
     // Logout
@@ -499,14 +542,16 @@ $(function(){
         window.location.href = 'index.html';
     });
 
-    // Escape HTML helper
     function escapeHtml(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        return text.replace(/[&<>"']/g, function(m) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[m];
+        });
     }
 
     loadItems();
